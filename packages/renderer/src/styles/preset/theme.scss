@@ -1,0 +1,44 @@
+body {
+  --skin-blue: #2196f3;
+  --skin-dark: #1b1b1b;
+  --skin-red: #f44336;
+  --skin-pink: #fb7299;
+  --skin-green: #4caf50;
+}
+
+body {
+  --app-theme: var(--skin-blue);
+
+  --app-color-bg: var(--color-bg-3);
+  --app-color-text: var(--color-text-1);
+
+  --scrollbar-bg: #ffffff;
+  --scrollbar-border-color: #aaa;
+  --scrollbar-thumb-bg: #cccccc;
+  --scrollbar-thumb-hover-bg: #b2b2b2;
+}
+
+body[arco-theme='dark'] {
+  --app-theme: var(--skin-dark);
+
+  --title-bar-color: #1b1b1b;
+
+  --bg-color: #212121;
+  --text-color: #cccccc;
+
+  --scrollbar-bg: #000000;
+  --scrollbar-thumb-bg: #666666;
+  --scrollbar-thumb-hover-bg: #999999;
+}
+
+body[arco-theme='red'] {
+  --app-theme: var(--skin-red);
+}
+
+body[arco-theme='pink'] {
+  --app-theme: var(--skin-pink);
+}
+
+body[arco-theme='green'] {
+  --app-theme: var(--skin-green);
+}
