@@ -1,7 +1,8 @@
 import WindowAction from './windowAction'
 import NetAction from './netAction'
+import Serveraction from './serverAction'
 
-const IpcActions = [WindowAction, NetAction]
+const IpcActions = [WindowAction, NetAction, Serveraction]
 
 function bind() {
   IpcActions.forEach(action => {

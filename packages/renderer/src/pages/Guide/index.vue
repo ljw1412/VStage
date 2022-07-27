@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import { Message } from '@arco-design/web-vue'
 import { useLocalStorage, get } from '@vueuse/core'
-import { reactive } from 'vue'
+import { reactive, toRaw } from 'vue'
+import { useRouter } from 'vue-router'
+import { ipcInvoke } from '/@/utils/electron'
 
+const router = useRouter()
+console.log(router)
 const defaultConfig = { port: 12138, auto: false }
 const localConfig = useLocalStorage('server-config', { ...defaultConfig })
 const config = reactive({ ...defaultConfig })
@@ -30,11 +35,21 @@ function updateLocalConfig() {
   }
 }
 
-function startServer() {
+async function startServer() {
   console.log('startServer', config)
   updateLocalConfig()
   server.loading = true
   server.message = '启动中'
+  const { success, message } = await ipcInvoke('server', 'start', toRaw(config))
+
+  if (success) {
+    server.loading = false
+    Message.success('服务启动成功')
+    router.replace({ name: 'AppHome' })
+  } else {
+    server.loading = false
+    Message.error(message)
+  }
 }
 
 </script>
