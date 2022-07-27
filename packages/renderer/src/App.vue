@@ -11,11 +11,29 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import AppTitleBar from './components/AppTitleBar.vue'
+import { IpcRendererEvent } from 'electron'
+import { ipcOff, ipcOn } from './utils/electron'
 
 export default defineComponent({
   name: 'App',
 
-  components: { AppTitleBar }
+  components: { AppTitleBar },
+
+  created() {
+    ipcOn('window_state_change', this.windowStateChange)
+  },
+
+  beforeUnmount() {
+    ipcOff('window_state_change', this.windowStateChange)
+  },
+
+  methods: {
+    windowStateChange(e: IpcRendererEvent, type: string) {
+      if (['focus', 'blur'].includes(type)) {
+        document.body.setAttribute('win-state', type)
+      }
+    }
+  }
 })
 </script>
 
@@ -23,6 +41,11 @@ export default defineComponent({
 body {
   color: var(--app-color-text);
   background-color: var(--app-color-bg);
+  transition: opacity 0.2s ease-in-out;
+}
+
+body[win-state="blur"] {
+  opacity: 0.5;
 }
 
 .app-container {

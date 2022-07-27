@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { URL } from 'url'
+import CommonListerner from './listerners/commonListerner'
 import ipcAction from './ipc/index'
 
 const isSingleInstance = app.requestSingleInstanceLock()
@@ -59,6 +60,7 @@ const createWindow = async () => {
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show()
     ipcAction.bind()
+    CommonListerner.bind(mainWindow!)
     if (env.MODE === 'development') {
       mainWindow?.webContents.openDevTools()
     }
@@ -87,6 +89,7 @@ app.on('second-instance', () => {
 
 app.on('window-all-closed', () => {
   ipcAction.unbind()
+  CommonListerner.unbind(mainWindow!)
   if (process.platform !== 'darwin') {
     app.quit()
   }

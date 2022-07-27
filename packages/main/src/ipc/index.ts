@@ -1,6 +1,7 @@
-import IpcWindowAction from './windowAction'
+import WindowAction from './windowAction'
+import NetAction from './netAction'
 
-const IpcActions = [IpcWindowAction]
+const IpcActions = [WindowAction, NetAction]
 
 function bind() {
   IpcActions.forEach(action => {

@@ -1,20 +1,23 @@
 <template>
   <div class="app-controls app-no-drag">
+    <slot name="prepend"></slot>
+    <a-divider v-if="$slots.prepend" direction="vertical" />
     <div class="ctrl-btn ctrl-min" @click="action('min')">
       <icon-minus />
     </div>
     <div class="ctrl-btn ctrl-max" @click="action('max')">
       <component :is="isMaximized ? 'icon-shrink' : 'icon-expand'"></component>
     </div>
-    <div class="ctrl-btn ctrl-close" @click="action('close')">
+    <div class="ctrl-btn ctrl-close" :class="{ 'is-closing': isClosing }" @click="action('close')">
       <icon-close />
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { IpcRendererEvent } from 'electron'
 import { defineComponent } from 'vue'
-import { ipcInvoke } from '/@/utils/electron'
+import { ipcInvoke, ipcOff, ipcOn } from '/@/utils/electron'
 
 export default defineComponent({
   name: 'AppControls',
@@ -23,23 +26,43 @@ export default defineComponent({
 
   data() {
     return {
+      isClosing: false,
       isMaximized: false
     }
+  },
+
+  created() {
+    ipcOn('window_state_change', this.windowStateChange)
+  },
+
+  beforeUnmount() {
+    ipcOff('window_state_change', this.windowStateChange)
   },
 
   methods: {
     action(action: 'min' | 'max' | 'close' | 'hide') {
       if (action === 'close' && this.closeConfirm) {
+        this.isClosing = true
         this.$modal.confirm({
           title: '确认退出',
           content: 'Master~ 您真的要走了吗？',
           maskClosable: false,
           modalStyle: { textAlign: 'center' },
-          onOk: () => { ipcInvoke('window.action', action) }
+          onOk: () => { ipcInvoke('window.action', action) },
+          onBeforeClose: () => { this.isClosing = false }
         })
         return
       }
       ipcInvoke('window.action', action)
+    },
+
+    windowStateChange(e: IpcRendererEvent, type: string) {
+
+      if (type === 'maximize') {
+        this.isMaximized = true
+      } else if (type === 'unmaximize') {
+        this.isMaximized = false
+      }
     }
   }
 })
@@ -48,6 +71,7 @@ export default defineComponent({
 <style lang="scss">
 .app-controls {
   display: flex;
+  align-items: center;
 
   .ctrl-btn {
     display: flex;
@@ -60,13 +84,15 @@ export default defineComponent({
     flex-shrink: 0;
 
     &:hover {
-      background-color: var(--color-fill-3);
+      background-color: rgba(255, 255, 255, 0.2);
     }
 
     &.ctrl-close {
       &:hover {
         background-color: var(--color-danger-light-4);
       }
+
+      &.is-closing,
       &:active {
         background-color: #f95a44;
       }

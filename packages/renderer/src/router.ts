@@ -1,9 +1,21 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '/@/pages/Home/index.vue'
+import Guide from '/@/pages/Guide/index.vue'
+import Setting from '/@/pages/Setting/index.vue'
 
 const routes = [
   {
     path: '/',
+    redirect: { name: 'AppGuide' }
+  },
+  {
+    path: '/guide',
+    name: 'AppGuide',
+    component: Guide,
+    meta: { title: '启动向导' }
+  },
+  {
+    path: '/home',
     name: 'AppHome',
     component: Home,
     meta: { title: '首页' }
@@ -11,7 +23,7 @@ const routes = [
   {
     path: '/setting',
     name: 'AppSetting',
-    component: () => import('/@/pages/Setting/index.vue'),
+    component: () => Setting,
     meta: { title: '设置' }
   } // Lazy load route component
 ]

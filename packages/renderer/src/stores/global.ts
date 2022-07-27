@@ -1,5 +1,6 @@
 import { useTitle, get, set } from '@vueuse/core'
 import { ref, computed } from 'vue'
+import config from './config'
 
 export const title = ref('')
 export function setTitle(t: string) {
@@ -14,6 +15,4 @@ useTitle(
   })
 )
 
-export default {
-  setTitle
-}
+export default { config, setTitle }

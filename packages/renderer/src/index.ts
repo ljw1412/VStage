@@ -20,3 +20,7 @@ createApp(App)
   .use(ArcoVue)
   .use(ArcoVueIcon)
   .mount('#app')
+
+if (import.meta.env.MODE === 'development') {
+  console.log(window.$global)
+}

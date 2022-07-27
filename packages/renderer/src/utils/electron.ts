@@ -1,6 +1,8 @@
 import { IpcRendererEvent } from 'electron'
 import * as logger from '/@/utils/logger'
 
+const notLogEvent = ['window_state_change']
+
 export function useElectron(): Readonly<ElectronApi> {
   return window.electron
 }
@@ -11,7 +13,7 @@ export function ipcInvoke(
   data: Record<string, any> = {}
 ) {
   const { ipcRenderer } = useElectron()
-  data.tabId = window.tabId
+  // data.tabId = window.tabId
   return ipcRenderer.invoke(channel, type, data)
 }
 
@@ -21,7 +23,7 @@ export function ipcSend(
   data: Record<string, any> = {}
 ) {
   const { ipcRenderer } = useElectron()
-  data.tabId = window.tabId
+  // data.tabId = window.tabId
   ipcRenderer.send(channel, type, data)
   logger.message(channel, '<<<' + type, data)
 }
@@ -41,8 +43,9 @@ export function ipcOn(
     type: string,
     data: Record<string, any> = {}
   ) {
-    logger.message(channel, '>>>' + type, data)
-
+    if (!notLogEvent.includes(channel)) {
+      logger.message(channel, '>>>' + type, data)
+    }
     listener(event, type, data)
   })
 }

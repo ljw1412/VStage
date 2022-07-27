@@ -1,11 +1,21 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+const ipc = {
+  ...ipcRenderer,
+  on: (...args) => {
+    ipcRenderer.on(...args)
+  },
+  off: (...args) => {
+    ipcRenderer.off(...args)
+  }
+} as Electron.IpcRenderer
+
 const apiKey = 'electron'
 /**
  * @see https://github.com/electron/electron/issues/21437#issuecomment-573522360
  */
 const api: ElectronApi = {
-  ipcRenderer,
+  ipcRenderer: ipc,
   versions: process.versions
 }
 
